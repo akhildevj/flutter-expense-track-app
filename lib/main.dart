@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import './models/transaction.dart';
 import './widgets/chart.dart';
@@ -6,6 +7,9 @@ import './widgets/new_transaction.dart';
 import './widgets/transaction_list.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+  SystemChrome.setPreferredOrientations(
+      [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]);
   runApp(const MyApp());
 }
 
@@ -43,7 +47,48 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  final List<Transaction> _userTransactions = [];
+  final List<Transaction> _userTransactions = [
+    Transaction(
+        id: DateTime.now().toString(),
+        title: "Flipkart",
+        amount: 7500,
+        date: DateTime.now()),
+    Transaction(
+        id: DateTime.now().toString(),
+        title: "Amazon",
+        amount: 8800,
+        date: DateTime.now().subtract(const Duration(days: 1))),
+    Transaction(
+        id: DateTime.now().toString(),
+        title: "Myntra",
+        amount: 6600,
+        date: DateTime.now().subtract(const Duration(days: 1))),
+    Transaction(
+        id: DateTime.now().toString(),
+        title: "Swiggy",
+        amount: 150,
+        date: DateTime.now().subtract(const Duration(days: 2))),
+    Transaction(
+        id: DateTime.now().toString(),
+        title: "Zomato",
+        amount: 200,
+        date: DateTime.now().subtract(const Duration(days: 2))),
+    Transaction(
+        id: DateTime.now().toString(),
+        title: "Uber",
+        amount: 600,
+        date: DateTime.now().subtract(const Duration(days: 3))),
+    Transaction(
+        id: DateTime.now().toString(),
+        title: "SBI",
+        amount: 10000,
+        date: DateTime.now().subtract(const Duration(days: 4))),
+    Transaction(
+        id: DateTime.now().toString(),
+        title: "LIC",
+        amount: 2500,
+        date: DateTime.now().subtract(const Duration(days: 5))),
+  ];
 
   List<Transaction> get _recentTransactions {
     return _userTransactions
@@ -84,22 +129,35 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
+    final appBar = AppBar(
+      title: const Text("Expense Track App"),
+      actions: [
+        IconButton(
+            onPressed: () => _startAddNewTransaction(context),
+            icon: const Icon(Icons.add))
+      ],
+    );
+
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("Expense Track App"),
-        actions: [
-          IconButton(
-              onPressed: () => _startAddNewTransaction(context),
-              icon: const Icon(Icons.add))
-        ],
-      ),
+      appBar: appBar,
       body: SingleChildScrollView(
         child: Column(
           children: <Widget>[
-            Chart(recentTransactions: _recentTransactions),
-            TransactionList(
-                transactions: _userTransactions,
-                deleteTransaction: _deleteTransaction)
+            SizedBox(
+                height: (MediaQuery.of(context).size.height -
+                        appBar.preferredSize.height -
+                        MediaQuery.of(context).padding.top) *
+                    0.3,
+                child: Chart(recentTransactions: _recentTransactions)),
+            SizedBox(
+              height: (MediaQuery.of(context).size.height -
+                      appBar.preferredSize.height -
+                      MediaQuery.of(context).padding.top) *
+                  0.7,
+              child: TransactionList(
+                  transactions: _userTransactions,
+                  deleteTransaction: _deleteTransaction),
+            )
           ],
         ),
       ),
